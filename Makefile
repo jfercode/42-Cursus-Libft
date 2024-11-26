@@ -1,90 +1,65 @@
-NAME = libft.a
+# Static library name
+NAME = build/libft.a
 
+# Compiler and compiler flags
 CC = cc
+C_FLAGS = -Wall -Werror -Wextra -g3 -I $(HEADER_DIR)
 
-CFILES = ft_isalpha.c \
-	ft_isdigit.c \
-	ft_isalnum.c \
-	ft_isascii.c \
-	ft_isprint.c \
-	ft_toupper.c \
-	ft_tolower.c \
-	ft_strncmp.c \
-	ft_memcmp.c \
-	ft_atoi.c \
-	ft_strlen.c \
-	ft_strlcpy.c \
-	ft_strlcat.c \
-	ft_memset.c \
-	ft_memcpy.c \
-	ft_memmove.c \
-	ft_memchr.c \
-    ft_calloc.c \
-    ft_bzero.c \
-	ft_strchr.c \
-	ft_strrchr.c \
-	ft_strnstr.c \
-	ft_strdup.c \
-	ft_substr.c \
-	ft_strjoin.c \
-	ft_strtrim.c \
-	ft_split.c \
-	ft_itoa.c \
-	ft_strmapi.c \
-	ft_striteri.c \
-	ft_putchar_fd.c \
-	ft_putstr_fd.c \
-	ft_putendl_fd.c \
-	ft_putnbr_fd.c
+# Directories
+SRC_DIR = source
+OBJ_DIR = build/obj
+HEADER_DIR = /include
 
-BONUS_CFILES = ft_lstnew_bonus.c	\
-	ft_lstadd_front_bonus.c	\
-	ft_lstsize_bonus.c	\
-	ft_lstlast_bonus.c	\
-	ft_lstadd_back_bonus.c	\
-	ft_lstdelone_bonus.c	\
-	ft_lstclear_bonus.c	\
-	ft_lstiter_bonus.c	\
-	ft_lstmap_bonus.c
+# Source files
+SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
+OBJS = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-HEADER_DIR = ./includes
-
-OBJS = $(CFILES:.c=.o)
-BONUS_OBJ = $(BONUS_CFILES:.c=.o)
-
-CFLAGS = -Wall -Wextra -Werror -I $(HEADER_DIR)
-
+# Default rule
 all: $(NAME)
 
 $(NAME): $(OBJS)
 	ar rcs $(NAME) $(OBJS)
 
-clean:
-	rm -f $(OBJS) $(BONUS_OBJ)
-	rm -f ./test_program
-	rm -f ./test_bonus_program
-	rm -f .b
+# Rule to compile .c files into .o
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	@echo "\033[1;33mCOMPILING $<...\033[0m"
+	$(CC) $(CFLAGS) -c $< -o $@
 
+# Clean object files and executable
+clean:
+	@echo "\033[1;31mCLEANING OBJECT FILES AND EXECUTABLES FROM LIBFT...\033[0m" 
+	rm -rf $(OBJ_DIR)
+	rm -f ./test_program
+	@echo "\033[32mCLEANING LIBFT DONE\033[0m"
+
+# Full clean (including library)
 fclean: clean
 	rm -f $(NAME)
+	@echo "\033[32mLIBFT CLEAR\033[0m"
 
+# Rebuild the project
 re: fclean all
+	@echo "\033[1;34mREBUILDING LIBFT LIBRARY...\033[0m"
 
-test: $(NAME) main.o
-	$(CC) $(CFLAGS) -o test_program main.o $(NAME)
+# Rule to run single tests
+test: $(NAME) 
+	@echo "\033[1;36mCOMPILING AND RUNNING TESTS...\033[0m"
+	$(CC) $(CFLAGS) -o test_program $(OBJ_DIR)/main.o $(NAME)
 	@./test_program
 	rm -f ./test_program
 
 bonus: .b
 
 .b: $(OBJS) $(BONUS_OBJ)
-	ar rcs $(NAME) $(OBJS) $(BONUS_OBJ)
-	touch .b
+	ar rcs $(NAME) $(OBJS)
+	touch $(OBJ_DIR)/.b
 
-bonus_test: bonus main_bonus.o
-	$(CC) $(CFLAGS) -o test_bonus_program main_bonus.o $(NAME)
-	@./test_bonus_program
-	rm -f test_bonus_program
+# Rule to run bonus tests
+bonus_test: $(NAME) 
+	@echo "\033[1;36mCOMPILING AND RUNNING BONUS TESTS...\033[0m"
+	$(CC) $(CFLAGS) -o test_program $(OBJ_DIR)/main_bonus.o $(NAME)
+	@./test_program
+	rm -f ./test_program
 
 .PHONY: all clean fclean re test bonus bonus_test
-
