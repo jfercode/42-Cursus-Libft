@@ -32,7 +32,7 @@ Los siguientes comandos deben ser ejecutados en la terminal, dentro del director
   <br/>
   <br/>
   <div style="margin: 20px 0 30px;">
-  <a href="https://github.com/H0ll0wB01">Javier Fernández Correa</a>
+  <a href="https://github.com/jfercode">Javier Fernández Correa</a>
   </div>
 </div>
   <br/>
